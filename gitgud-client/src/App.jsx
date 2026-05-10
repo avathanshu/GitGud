@@ -13,6 +13,10 @@ import Category from './Category'
 import QuizCarousel from './components/QuizCarousel'
 import Leaderboard from './Leaderboard'
 import ProfilePage from './ProfilePage'
+import UserQuizPage from './UserQuizPage'
+import UserQuizCreate from './UserQuizCreate'
+import UserQuizCarousel from './UserQuizCarousel'
+import AdminPanel from './AdminPanel'
 import { useNavigate } from 'react-router-dom'
 import { useRef } from 'react'
 
@@ -60,6 +64,10 @@ function App() {
         <Route path="quiz" element={<Category />} />
         <Route path="quiz/:gameId" element={<QuizCarousel user={user} />} />
         <Route path="leaderboard" element={<Leaderboard currentUid={user.uid} />} />
+        <Route path="user-quiz" element={<UserQuizPage user={user} />} />
+        <Route path="user-quiz/create" element={<UserQuizCreate user={user} />} />
+        <Route path="user-quiz/play/:gameId" element={<UserQuizCarousel user={user} />} />
+        <Route path="admin" element={<AdminPanel user={user} />} />
       </Route>
     </Routes>
   )

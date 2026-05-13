@@ -27,6 +27,11 @@ function App() {
 
   useEffect(() => {
     const unsub = onAuth(async (u) => {
+      if (u && !u.emailVerified) { 
+        setUser(null)
+        setShowAuth(true)
+        return
+      }
       setUser(u)
       if (u) {
         setShowAuth(false)

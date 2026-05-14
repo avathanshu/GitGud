@@ -186,7 +186,7 @@ export default function UserQuizPage({ user }) {
                     disabled={deleting === quiz.id}
                     title="Delete this quiz"
                   >
-                    {deleting === quiz.id ? "…" : "🗑"}
+                    {deleting === quiz.id ? "…" : "Delete"}
                   </button>
                 </div>
               ))}
@@ -213,7 +213,7 @@ export default function UserQuizPage({ user }) {
                   <div className="uq-panel-loading">Loading…</div>
                 ) : count === 0 ? (
                   <div className="uq-panel-empty">
-                    <span className="uq-empty-icon">🎮</span>
+                    
                     <p>No quizzes yet. Be the first to create one!</p>
                     <button className="uq-panel-create-btn" onClick={() => navigate("/user-quiz/create")}>
                       Create {game.name} Quiz

@@ -7,15 +7,14 @@ import {
   GoogleAuthProvider,
   signOut,
   onAuthStateChanged,
+  sendPasswordResetEmail,
+  sendEmailVerification,
 } from "firebase/auth";
 import { app } from "./firebase";
-import { sendPasswordResetEmail } from "firebase/auth";
-import { sendEmailVerification } from "firebase/auth";
-export const verifyEmail = (user) => sendEmailVerification(user);
 
-export const sendPasswordReset = (email) =>
-  sendPasswordResetEmail(auth, email);
+// auth must be initialised FIRST — everything below depends on it
 export const auth = getAuth(app);
+
 const googleProvider = new GoogleAuthProvider();
 
 export const registerWithEmail = (email, password) =>
@@ -30,3 +29,9 @@ export const loginWithGoogle = () =>
 export const logout = () => signOut(auth);
 
 export const onAuth = (cb) => onAuthStateChanged(auth, cb);
+
+// These now safely reference auth because it is already defined above
+export const verifyEmail = (user) => sendEmailVerification(user);
+
+export const sendPasswordReset = (email) =>
+  sendPasswordResetEmail(auth, email);

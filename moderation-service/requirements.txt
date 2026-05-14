@@ -1,0 +1,29 @@
+# ─────────────────────────────────────────────────────────────
+# moderation-service — Python dependencies
+# ─────────────────────────────────────────────────────────────
+#
+# PREREQUISITES (must be installed on your machine first):
+#   - Python 3.8+      https://www.python.org/downloads/
+#   - pip              comes bundled with Python 3.4+
+#
+# Verify you have them:
+#   python --version
+#   pip --version
+#
+# INSTALL:
+#   pip install -r requirements.txt
+#
+# NOTE: Detoxify downloads a PyTorch NLP model (~500MB) on first run.
+#       Make sure you have a stable internet connection the first time
+#       you start the service.
+# ─────────────────────────────────────────────────────────────
+
+# HTTP server
+flask
+
+# Allows the React frontend (different port) to call this service
+flask-cors
+
+# NLP toxicity detection model — wraps PyTorch under the hood.
+# Pulls in torch + transformers automatically as dependencies.
+detoxify

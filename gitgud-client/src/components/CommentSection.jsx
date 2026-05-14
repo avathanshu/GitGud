@@ -38,6 +38,43 @@ function CommentSection({ quizId }) {
   const [postingReply, setPostingReply] = useState(false);
   const [expandedReplies, setExpandedReplies] = useState({}); // { commentId: bool }
   const bottomRef = useRef(null);
+
+  // MODERATION: tracks whether a moderation request is in-flight,
+  // used to disable the Post button and show "Checking…" label
+  const [moderating, setModerating] = useState(false);
+
+  // MODERATION: holds the error message shown to the user if their text is flagged
+  const [moderationError, setModerationError] = useState("");
+
+  // MODERATION: base URL for the Python moderation microservice (moderation-service/app.py).
+  // Set VITE_MODERATION_URL in your .env — falls back to localhost for local dev.
+  const MODERATION_URL = import.meta.env.VITE_MODERATION_URL || "http://localhost:5001";
+
+  // MODERATION: sends text to the Flask /moderate endpoint before it hits Firestore.
+  // Returns true  → text is clean, proceed with post
+  // Returns false → text was flagged, block post and show error to user
+  // Fails open (returns true) if the service is unreachable so a backend outage
+  // doesn't prevent users from commenting.
+  const moderateText = async (text) => {
+    setModerationError("");
+    try {
+      const res = await fetch(`${MODERATION_URL}/moderate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      const data = await res.json();
+      if (!data.allowed) {
+        setModerationError("Your message was flagged as inappropriate. Please revise it.");
+        return false;
+      }
+      return true;
+    } catch (err) {
+      // Service is down — fail open so users aren't locked out, but log for ops visibility
+      console.warn("Moderation service unavailable:", err);
+      return true;
+    }
+  };
   // Cache of uid -> { userName, userPhoto } fetched fresh from Firestore
   const [userProfiles, setUserProfiles] = useState({});
   const fetchingProfiles = useRef(new Set());
@@ -103,6 +140,12 @@ function CommentSection({ quizId }) {
   const handlePost = async () => {
     const currentUser = userRef.current;
     if (!text.trim() || !currentUser || posting) return;
+
+    // MODERATION: screen the comment before writing to Firestore
+    setModerating(true);
+    const allowed = await moderateText(text.trim());
+    setModerating(false);
+    if (!allowed) return; // moderateText already set the error message
     setPosting(true);
     try {
       await addDoc(
@@ -133,6 +176,12 @@ function CommentSection({ quizId }) {
   const handlePostReply = async (parentId) => {
     const currentUser = userRef.current;
     if (!replyText.trim() || !currentUser || postingReply) return;
+
+    // MODERATION: screen the reply before writing to Firestore
+    setModerating(true);
+    const allowed = await moderateText(replyText.trim());
+    setModerating(false);
+    if (!allowed) return; // moderateText already set the error message
     setPostingReply(true);
     try {
       await addDoc(
@@ -477,20 +526,25 @@ function CommentSection({ quizId }) {
               type="text"
               placeholder="Add a comment…"
               value={text}
-              onChange={(e) => setText(e.target.value)}
+              onChange={(e) => { setText(e.target.value); setModerationError(""); }}
               onKeyDown={handleKeyDown}
               maxLength={500}
-              disabled={posting}
+              disabled={posting || moderating}
             />
             <button
               className="cs-post-btn"
               onClick={handlePost}
-              disabled={!text.trim() || posting}
+              disabled={!text.trim() || posting || moderating}
               aria-label="Post comment"
             >
-              {posting ? "…" : "Post"}
+              {moderating ? "Checking…" : posting ? "…" : "Post"}
             </button>
           </div>
+          {moderationError && (
+            <div className="cs-moderation-error" style={{ color: "red", fontSize: "0.8rem", marginTop: 4 }}>
+              {moderationError}
+            </div>
+          )}
         </div>
       ) : (
         <div className="cs-login-prompt">

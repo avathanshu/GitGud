@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { registerWithEmail, loginWithEmail, verifyEmail } from "./auth";
+import { registerWithEmail, loginWithEmail, verifyEmail, auth } from "./auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 function validatePassword(pw) {
   if (pw.length < 8)             return "Password must be at least 8 characters.";
@@ -16,13 +17,14 @@ export default function AuthPage({ onIntent, unverifiedEmail }) {
   const [confirm, setConfirm]   = useState("");
   const [error, setError]       = useState("");
   const [loading, setLoading]   = useState(false);
+  const [resendSent, setResendSent] = useState(false);
 
-  const reset = () => { setError(""); setEmail(""); setPassword(""); setConfirm(""); };
+  const reset = () => { setError(""); setEmail(""); setPassword(""); setConfirm(""); setResendSent(false); };
 
   async function handleLogin() {
     setError("");
     if (!email.trim()) return setError("Email is required.");
-    onIntent('login')
+    onIntent("login");
     setLoading(true);
     try {
       await loginWithEmail(email.trim(), password);
@@ -40,12 +42,33 @@ export default function AuthPage({ onIntent, unverifiedEmail }) {
     const pwErr = validatePassword(password);
     if (pwErr) return setError(pwErr);
     if (password !== confirm) return setError("Passwords do not match.");
-    onIntent('register')
+    onIntent("register");
     setLoading(true);
     try {
       const cred = await registerWithEmail(email.trim(), password);
       await verifyEmail(cred.user);
       setView("verify");
+    } catch (e) {
+      setError(friendlyError(e.code));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Lets a locked-out existing user resend the verification email.
+  // We sign them in temporarily (to get the user object), send the email,
+  // then immediately sign them back out so they can't access the app.
+  async function handleResend() {
+    setError("");
+    if (!email.trim() || !password) {
+      return setError("Enter your email and password above to resend the verification link.");
+    }
+    setLoading(true);
+    try {
+      const cred = await signInWithEmailAndPassword(auth, email.trim(), password);
+      await verifyEmail(cred.user);
+      await auth.signOut();
+      setResendSent(true);
     } catch (e) {
       setError(friendlyError(e.code));
     } finally {
@@ -84,10 +107,27 @@ export default function AuthPage({ onIntent, unverifiedEmail }) {
               value={password} onChange={e => setPassword(e.target.value)}
               autoComplete="current-password"
               onKeyDown={e => e.key === "Enter" && handleLogin()} />
-            {unverifiedEmail && (
-              <p style={styles.error}>Please verify your email before logging in. Check your inbox.</p>
+
+            {/* Unverified account banner — now includes a Resend button */}
+            {unverifiedEmail && !resendSent && (
+              <div style={styles.error}>
+                <p style={{ margin: "0 0 8px" }}>
+                  Your email isn't verified yet. Check your inbox (and spam).
+                </p>
+                <button style={styles.resendBtn} onClick={handleResend} disabled={loading}>
+                  {loading ? "Sending…" : "Resend Verification Email"}
+                </button>
+              </div>
             )}
+
+            {unverifiedEmail && resendSent && (
+              <p style={styles.success}>
+                Verification email sent! Check your inbox then log in again.
+              </p>
+            )}
+
             {error && <p style={styles.error}>{error}</p>}
+
             <button style={styles.primary} onClick={handleLogin} disabled={loading}>
               {loading ? "Logging in…" : "Log In"}
             </button>
@@ -125,11 +165,13 @@ export default function AuthPage({ onIntent, unverifiedEmail }) {
           </div>
         )}
 
-        {/* VERIFY */}
+        {/* VERIFY — shown after successful registration */}
         {view === "verify" && (
           <div style={styles.section}>
             <p style={styles.heading}>Check your email</p>
-            <p style={styles.tagline}>A verification link was sent to <strong>{email}</strong>. Click it before logging in.</p>
+            <p style={styles.tagline}>
+              A verification link was sent to <strong>{email}</strong>. Click it before logging in.
+            </p>
             <button style={styles.primary} onClick={() => { reset(); setView("login"); }}>
               Go to Login
             </button>
@@ -184,4 +226,9 @@ const styles = {
   error: { color: "#ef4444", fontSize: 13, margin: 0,
     background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)",
     borderRadius: 6, padding: "8px 12px" },
+  success: { color: "#22c55e", fontSize: 13, margin: 0,
+    background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.3)",
+    borderRadius: 6, padding: "8px 12px" },
+  resendBtn: { background: "transparent", border: `1px solid #ef4444`, color: "#ef4444",
+    borderRadius: 6, padding: "6px 12px", fontSize: 13, cursor: "pointer", width: "100%" },
 };

@@ -25,7 +25,6 @@ import LeaderboardPage from "./LeaderboardPage"
 function App() {
   const [user, setUser] = useState(undefined)
   const [showAuth, setShowAuth] = useState(false)
-  const [unverifiedEmail, setUnverifiedEmail] = useState(false)
   const [hasSeenLanding, setHasSeenLanding] = useState(
     () => sessionStorage.getItem('seenLanding') === 'true'
   )
@@ -34,13 +33,10 @@ function App() {
 
   useEffect(() => {
     const unsub = onAuth(async (u) => {
-      if (u && !u.emailVerified) {
-        setUser(null)
-        setShowAuth(true)
-        setUnverifiedEmail(true)
-        return
-      }
-      setUnverifiedEmail(false)
+      // Removed emailVerified gate — Firebase's free tier has slow/expiring
+      // verification emails which locks out legitimate users. Registration
+      // still sends a verification email for awareness, but it is not enforced
+      // as a login requirement.
       setUser(u)
       if (u) {
         setShowAuth(false)
@@ -64,7 +60,6 @@ function App() {
   if (!user) return showAuth
     ? <AuthPage
         onIntent={(intent) => { authIntentRef.current = intent }}
-        unverifiedEmail={unverifiedEmail}
       />
     : <LandingPage onLogin={handleGetStarted} />
 

@@ -269,6 +269,33 @@ function ProfilePage({ user })
         }
     };
 
+    const handleStartChat = async () => {
+        if(!user || !targetId) return;
+
+        const chatId = user.uid < targetId ? `${user.uid}_${targetId}` : `${targetId}_${user.uid}`;
+
+        try{
+            const chatRef = doc(db, "chats", chatId);
+            const chatSnap = await getDoc(chatRef);
+
+            //if chat room doesnt exist, make it
+            if(!chatSnap.exists())
+            {
+                await setDoc(chatRef, {
+                    chatId: chatId,
+                    participants: [user.uid, targetId],
+                    isGroup: false,
+                    updatedAt: serverTimestamp(),
+                    lastMessage: ""
+                });
+            }
+            navigate(`/messages/${chatId}`);
+        } catch(err){
+            console.error("Error starting chat:", err);
+            alert("Could not start chat thread.");
+        }
+    };
+
     if (loading) {
         return <div className="profile-container dark">Loading...</div>;
     }
@@ -364,7 +391,10 @@ function ProfilePage({ user })
                     user && (
                         <div className="visitor-controls">
                             {friendStatus === "friend" ? (
-                                <button className="remove-btn" onClick={handleRemoveFriend}>Remove Friend</button>
+                                <div className="friend-actions-wrapper">
+                                    <button className="remove-btn" onClick={handleRemoveFriend}>Remove Friend</button>
+                                    <button className="message-btn" onClick={handleStartChat}>Message</button>
+                                </div>    
                             ) : friendStatus === "pending" ? (
                                 <button className="pending-btn" disabled>Request Sent</button>
                             ) : (

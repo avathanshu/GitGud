@@ -5,7 +5,7 @@ import { db, auth } from "../firebase";
 import { collection, addDoc, serverTimestamp, doc, getDoc } from "firebase/firestore";
 
 export default function AimGame() {
-    const GAME_TIME = 15
+    const GAME_TIME = 30; //seconds
 
 const [score, setScore] = useState(0);
 const [timeLeft, setTimeLeft] = useState(GAME_TIME);
@@ -37,13 +37,8 @@ const [currentMap, setCurrentMap] = useState(
 
 //Below will spawn the targets randomly, adjusted later 
 const spawnTarget = () => { 
-  const x = Math.random() * 90;
-
-  // Left side higher (75%), right side lower (50%)
-  const maxY = 75 - (x / 90) * 25;
-
-  const y = Math.random() * maxY;
-
+const x = 10 + Math.random() * 80;
+const y = 20 + Math.random() * 60;
   setTarget({ x, y });
 };
 

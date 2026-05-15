@@ -1,0 +1,358 @@
+.quiz-carousel.dark
+{
+    --qc-bg:    #0d0d0d;
+    --qc-surface:   #181818;
+    --qc-frame:     #ff6a00;
+    --qc-text:  #f0f0f0;
+    --qc-subtext:   #999;
+    --qc-input-bg:  #222222;
+    --qc-input-border: #333;
+    --qc-submit-bg:  #000;
+    --qc-header-line: rgba(255, 105, 0, 0.35);
+}
+
+.quiz-carousel.light
+{
+    --qc-bg:    #f4f4f4;
+    --qc-surface:   #ffffff;
+    --qc-frame:     #0066cc;
+    --qc-text:  #111111;
+    --qc-subtext:   #666;
+    --qc-input-bg:  #f0f4f8;
+    --qc-input-border: #d0dcea;
+    --qc-submit-bg:  #fff;
+    --qc-header-line: rgba(0, 102, 204, 0.2);
+}
+
+.reaction-page {
+  display: grid; 
+  grid-template-rows: auto auto 1fr auto; 
+  justify-items: center; 
+  background: var(--qc-bg);
+  color: var(--qc-text);
+  height: calc(100vh - 70px);
+  padding: 8px 20px;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+/* Header */
+.reaction-header {
+  text-align: center;
+
+  /* Keep the header above everything else */
+  position: relative;
+  z-index: 30;
+
+  /* Prevent the header from shrinking */
+  flex-shrink: 0;
+
+  /* Add spacing below the header */
+  margin-bottom: 12px;
+
+  /* Ensure the header spans the full width */
+  width: 100%;
+  max-width: 1100px;
+}
+
+/* Header title */
+.reaction-header h1 {
+  font-size: clamp(1.6rem, 2.3vw, 3rem);
+  margin-bottom: 0.25rem;
+  color: var(--qc-text);
+}
+
+/* Header description */
+.reaction-header p {
+  font-size: 0.9rem;
+  margin: 0;
+  color: var(--qc-subtext);
+}
+
+/* Stats Overlay Container */
+.stats-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 15;
+  left: calc(100% + 12px);
+}
+/* Individual stat cards — now theme friendly */
+.stats-overlay .stat-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 36px;
+  padding: 6px 10px;
+  box-sizing: border-box;
+  /* Theme-aware surface (auto light/dark) */
+  background: var(--qc-surface);
+  /* Same border style as Start button */
+  border: 1px solid var(--qc-frame);
+  border-radius: 8px;
+  /* Consistent glow in both themes */
+  box-shadow: 0 0 8px var(--qc-header-line);
+}
+/* Label text */
+.stats-overlay .stat-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--qc-subtext);
+  margin: 0;
+  text-transform: uppercase;
+}
+/* Value text */
+.stats-overlay .stat-value {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--qc-text);
+  margin: 0;
+  text-align: right;
+}
+
+
+/* Game Wrapper */
+.game-wrapper {
+  position: relative;
+  display: flex;           
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;              
+  max-width: 1600px;       
+  margin-top: 8px;          
+}
+
+/* Main Game Box */
+.reaction-game {
+  position: relative;
+  width: min(
+    1200px,
+    78vw,
+    calc((100vh - 280px) * 16 / 9)
+  );
+
+  aspect-ratio: 16 / 9;
+
+  overflow: hidden;
+  border-radius: 12px;
+
+  border: 3px solid var(--qc-frame);
+  background: var(--qc-surface);
+  border-color: transparent;      /* hide border until hover */
+  box-shadow: none;               /* no glow when idle */
+  transition: 0.25s ease;
+
+  cursor: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+
+  transform: none;
+}
+
+.reaction-game:hover {
+  border-color: var(--qc-frame);
+  box-shadow: 0 0 20px var(--qc-header-line);
+}
+
+.reaction-game:focus,
+.reaction-game:active {
+  outline: none;
+  box-shadow: 0 0 20px var(--qc-header-line);
+}
+.reaction-game img {
+  user-select: none;
+  pointer-events: none;
+}
+/* Background Image */
+.background-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+/* Enemy Target */
+.enemy-target {
+  position: absolute;
+  top: 42%;
+  left: 45%;
+  width: 12%;
+  height: auto;
+  z-index: 5;
+  pointer-events: none;
+  animation: peekIn 0.6s ease-out forwards;
+}
+@keyframes peekIn {
+  from { transform: translateX(-35px); }
+  to   { transform: translateX(0); }
+}
+/* Scope Overlay */
+.scope-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center -425px;
+  z-index: 10;
+  pointer-events: none;
+}
+/* Center Message */
+.game-message {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 1px solid var(--qc-frame);
+  box-shadow: 0 0 10px var(--qc-header-line);
+  padding: 0.7rem 1.4rem;
+  border-radius: 999px;
+  font-size: 1rem; 
+  font-weight: bold;
+  color: var(--qc-text);
+  z-index: 20;
+  background: var(--qc-surface);
+  opacity: 0.92;
+}
+/* Move controls into the stats panel */
+.controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+  width: 100%;
+
+  /* Prevent the button from stretching vertically */
+  flex: 0 0 auto;
+  align-items: center;
+}
+
+/* Start Button */
+.start-button {
+  width: 100%;
+  max-width: 180px;
+
+  /* Fixed height keeps it consistent on 1080p and 1440p */
+  height: 42px;
+  min-height: 42px;
+  max-height: 42px;
+
+  padding: 0 16px; /* horizontal padding only */
+
+  background: var(--qc-frame);
+  color: var(--qc-submit-text, #000);
+
+  border: none;
+  border-radius: 8px;
+
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  cursor: pointer;
+
+  transition: all 0.25s ease;
+  box-shadow: 0 0 8px var(--qc-header-line);
+
+  /* Prevent flex/grid parents from stretching it */
+  flex: 0 0 auto;
+  align-self: center;
+}
+
+.start-button:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 12px var(--qc-frame);
+}
+
+.start-button:active {
+  transform: scale(0.97);
+}
+
+/* Results Panel */
+.results-panel {
+  max-width: 700px;
+  margin: 2rem auto 0;
+  background: var(--qc-surface);
+  border: 2px solid var(--qc-frame);
+  border-radius: 12px;
+  padding: 30px 50px;
+  text-align: center;
+  color: var(--qc-text);
+  box-shadow:
+    0 0 15px var(--qc-frame),
+    0 0 40px var(--qc-header-line);
+  animation: fadeIn 0.3s ease;
+}
+.results-panel h2 {
+  margin-bottom: 1rem;
+}
+.results-grid {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+.results-grid div {
+  color: var(--qc-subtext);
+}
+.rank-display h3 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--qc-frame);
+}
+.rank-display p {
+  font-size: 1.05rem;
+  color: var(--qc-subtext);
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+/* Mobile */
+@media (max-width: 768px) {
+  .reaction-page { padding: 1rem; }
+  .reaction-header h1 { font-size: 2rem; }
+  .stats-bar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .game-message {
+    font-size: 1rem;
+    padding: 0.6rem 1rem;
+  }
+  .rank-display h3 {
+    font-size: 1.5rem;
+  }
+}
+
+.back-button {
+  background: var(--qc-frame);
+  color: var(--qc-submit-text, #000);
+  border: none;
+  border-radius: 8px;
+
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  font-weight: 700;
+
+  cursor: pointer;
+  transition: 0.2s ease;
+  box-shadow: 0 0 8px var(--qc-header-line);
+}
+
+.back-button:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 12px var(--qc-frame);
+}
+
+.back-button:active {
+  transform: scale(0.97);
+}

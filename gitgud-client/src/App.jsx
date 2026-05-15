@@ -3,6 +3,7 @@ import Layout from './Layout'
 import Home from './Home'
 import Practice from './Practice'
 import AimTrainer from './AimTrainer'
+import ReactionTrainer from './ReactionTrainer'
 import { useState, useEffect } from 'react'
 import './App.css'
 import AuthPage from './AuthPage'
@@ -69,6 +70,7 @@ function App() {
         <Route index element={<Home user={user} />} />
         <Route path="practice" element={<Practice />} />
         <Route path="practice/aim" element={<AimTrainer />} />
+        <Route path="practice/reaction" element={<ReactionTrainer />} />
         <Route path="quiz" element={<Category />} />
         <Route path="quiz/:gameId" element={<QuizCarousel user={user} />} />
         <Route path="leaderboard" element={<LeaderboardPage currentUid={user.uid} />} />

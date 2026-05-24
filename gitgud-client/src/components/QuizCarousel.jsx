@@ -293,7 +293,7 @@ function YoutubePlayer({ youtubeId, pauseAt, onPaused, onVideoEnded, isSubmitted
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-export default function QuizCarousel({ user }) {
+export default function QuizCarousel({ user, onCorrectAnswer, onQuizComplete }) {  // DAILIES: add callbacks
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
@@ -404,6 +404,9 @@ export default function QuizCarousel({ user }) {
       awardPoints(user.uid, 10).catch((err) => console.error("awardPoints failed:", err));
     }
 
+    // DAILIES: notify parent that a correct answer was submitted
+if (correct && onCorrectAnswer) onCorrectAnswer();
+
     // Fallback only — if the video end event never fires (e.g. user skips or
     // YouTube fails to report it), show complete after 60s on the last question.
     // handleVideoEnded is the real trigger and will cancel this if it fires first.
@@ -412,6 +415,8 @@ export default function QuizCarousel({ user }) {
       if (advanceTimer.current) clearTimeout(advanceTimer.current);
       advanceTimer.current = setTimeout(() => {
         setShowComplete(true);
+        // DAILIES: notify parent that the quiz is complete with the final score %
+        if (onQuizComplete) onQuizComplete({ passPct: Math.round((correctCount / total) * 100) });
       }, 60000); // 60s fallback — video end event should fire long before this
     }
   };

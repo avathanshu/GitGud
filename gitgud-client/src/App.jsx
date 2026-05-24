@@ -24,6 +24,7 @@ import { useRef } from 'react'
 import LeaderboardPage from "./LeaderboardPage"
 import ChatPage from './ChatPage'
 import ChatDashboard from './ChatDashboard'
+import DailiesPage from './DailiesPage'   // DAILIES: new page
 
 function App() {
   const [user, setUser] = useState(undefined)
@@ -85,6 +86,7 @@ function App() {
         <Route path="critique/create" element={<CritiqueCreate user={user} />} />
         <Route path="messages" element={<ChatDashboard user={user} />} />
         <Route path="messages/:chatId" element={<ChatPage user={user} />} />
+        <Route path="dailies" element={<DailiesPage user={user} />} />
       </Route>
     </Routes>
   )

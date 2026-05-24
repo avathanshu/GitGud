@@ -4,7 +4,7 @@ import { useTheme } from '../context/ThemeContext';
 import { db, auth } from "../firebase";
 import { collection, addDoc, serverTimestamp, doc, getDoc } from "firebase/firestore";
 
-export default function AimGame() {
+export default function AimGame({ onGameEnd }) {   // DAILIES: accept callback from parent
     const GAME_TIME = 30; //seconds
 
 const [score, setScore] = useState(0);
@@ -176,6 +176,8 @@ const endGame = async (finalScore, finalClicks) => {
   };
 
   setResult(resultData); 
+  // DAILIES: notify parent that a session ended with its stats
+if (onGameEnd) onGameEnd({ accuracy: resultData.accuracy, session: true })
 
   console.log("Aim Trainer Results:", resultData);
 

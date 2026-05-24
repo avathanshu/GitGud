@@ -11,7 +11,7 @@ import { collection, addDoc, serverTimestamp, doc, getDoc } from "firebase/fires
 
 const TOTAL_ROUNDS = 8;
 
-export default function ReactionGame() {
+export default function ReactionGame({ onSessionComplete }) {  // DAILIES: accept callback
   const navigate = useNavigate();
   const { theme } = useTheme();
 
@@ -155,6 +155,8 @@ async function saveReactionResult(avg, best, rounds) {
 );
 const finalBest = Math.min(...updatedTimes);
 saveReactionResult(finalAvg, finalBest, updatedTimes.length);
+// DAILIES: notify parent that a full session completed
+if (onSessionComplete) onSessionComplete();
       } else {
         // Show result briefly before next round
         setGameState("result");

@@ -8,7 +8,6 @@
     --qc-input-bg:  #222222;
     --qc-input-border: #333;
     --qc-submit-bg:  #000;
-    --qc-header-line: rgba(255, 105, 0, 0.35);
     --qc-submit-bg:     #ff6a00;
     --qc-submit-text:   #000; 
     --qc-header-line:   rgba(255, 106, 0, 0.35);
@@ -24,7 +23,7 @@
     --qc-subtext:   #666;
     --qc-input-bg:  #f0f4f8;
     --qc-input-border: #d0dcea;
-    --qc-submit-bg:  #0066cc;;
+    --qc-submit-bg:  #0066cc;
     --qc-submit-text: #ffffff;
     --qc-header-line: rgba(0, 102, 204, 0.2);
     --qc-frame-glow: rgba(0, 102, 204, 0.2);
@@ -482,4 +481,43 @@
     overflow: hidden;
     text-overflow: ellipsis;
     width: 100%;
+}
+
+.visitor-controls
+{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.friend-actions-wrapper
+{
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.message-btn
+{
+    background-color: var(--qc-submit-bg);
+    color: var(--qc-submit-text);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.message-btn:hover
+{
+    filter: brightness(1.2);
+    box-shadow: 0 0 15px var(--qc-header-line);
+}
+
+.message-btn:active
+{
+    transform: scale(0.95);
 }

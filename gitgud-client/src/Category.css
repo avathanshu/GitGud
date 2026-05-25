@@ -1,9 +1,9 @@
 /* Category.css
-   Game selection hub — dark: black + orange | light: white + blue
+   Game selection hub - dark: black + orange | light: white + blue
    Preserves the existing card hover/animation behaviour.
 */
 
-/* ── Tokens ──────────────────────────────────────────────────────────────── */
+/* -- Tokens ---------------------------------------------------------------- */
 .quiz-carousel.dark {
   --qc-bg:           #0d0d0d;
   --qc-surface:      #181818;
@@ -28,7 +28,7 @@
   --qc-header-line:  rgba(0, 102, 204, 0.2);
 }
 
-/* ── Page shell ──────────────────────────────────────────────────────────── */
+/* -- Page shell ------------------------------------------------------------ */
 .category-page {
   background-color: var(--qc-bg);
   min-height: 100vh;
@@ -39,7 +39,7 @@
   transition: background-color 0.2s ease;
 }
 
-/* ── Header ──────────────────────────────────────────────────────────────── */
+/* -- Header ---------------------------------------------------------------- */
 .category-header h1 {
   color: var(--qc-text);
   font-size: 2.5rem;
@@ -56,7 +56,7 @@
   margin: 0 auto 40px;
 }
 
-/* ── Cards grid ──────────────────────────────────────────────────────────── */
+/* -- Cards grid ------------------------------------------------------------ */
 .games-grid {
   display: flex;
   flex-direction: row;
@@ -73,7 +73,7 @@
   .games-grid { transform: scale(1); }
 }
 
-/* ── Game card ───────────────────────────────────────────────────────────── */
+/* -- Game card ------------------------------------------------------------- */
 .game-card {
   flex: 1;
   min-width: 240px;
@@ -100,7 +100,7 @@
   box-shadow: 0 20px 40px -15px var(--game-accent);
 }
 
-/* ── Card image ──────────────────────────────────────────────────────────── */
+/* -- Card image ------------------------------------------------------------ */
 .card-image-container {
   height: 180px;
   width: 100%;
@@ -127,7 +127,7 @@
   filter: grayscale(0%) brightness(1.1);
 }
 
-/* ── Card content ────────────────────────────────────────────────────────── */
+/* -- Card content ---------------------------------------------------------- */
 .card-content {
   padding: 18px 20px 20px;
   position: relative;
@@ -157,7 +157,7 @@
   flex: 1;
 }
 
-/* ── Card action buttons ─────────────────────────────────────────────────── */
+/* -- Card action buttons --------------------------------------------------- */
 .card-actions {
   display: flex;
   gap: 10px;
@@ -192,7 +192,7 @@
   color: var(--game-accent);
 }
 
-/* ── Inset glow on hover ─────────────────────────────────────────────────── */
+/* -- Inset glow on hover --------------------------------------------------- */
 .game-card:hover::after {
   content: "";
   position: absolute;
@@ -205,7 +205,7 @@
   pointer-events: none;
 }
 
-/* ── Responsive ──────────────────────────────────────────────────────────── */
+/* -- Responsive ------------------------------------------------------------ */
 @media (max-width: 700px) {
   .games-grid { flex-direction: column; align-items: center; transform: none; }
   .game-card  { max-width: 100%; width: 100%; }

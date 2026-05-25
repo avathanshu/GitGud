@@ -3,6 +3,7 @@ import Layout from './Layout'
 import Home from './Home'
 import Practice from './Practice'
 import AimTrainer from './AimTrainer'
+import ReactionTrainer from './ReactionTrainer'
 import { useState, useEffect } from 'react'
 import './App.css'
 import AuthPage from './AuthPage'
@@ -23,6 +24,8 @@ import CritiqueCreate from './CritiqueCreate'
 import { useNavigate } from 'react-router-dom'
 import { useRef } from 'react'
 import LeaderboardPage from "./LeaderboardPage"
+import ChatPage from './ChatPage'
+import ChatDashboard from './ChatDashboard'
 
 function App() {
   const [user, setUser] = useState(undefined)
@@ -66,6 +69,7 @@ function App() {
         <Route index element={<Home user={user} />} />
         <Route path="practice" element={<Practice />} />
         <Route path="practice/aim" element={<AimTrainer />} />
+        <Route path="practice/reaction" element={<ReactionTrainer />} />
 
         {/* ── Quiz hub (game selection) ─────────────────────────────────── */}
         <Route path="quiz" element={<Category user={user} />} />
@@ -93,6 +97,10 @@ function App() {
         {/* ── Critique ──────────────────────────────────────────────────── */}
         <Route path="critique" element={<CritiquePage user={user} />} />
         <Route path="critique/create" element={<CritiqueCreate user={user} />} />
+
+        {/* ── Messaging ─────────────────────────────────────────────────── */}
+        <Route path="messages" element={<ChatDashboard user={user} />} />
+        <Route path="messages/:chatId" element={<ChatPage user={user} />} />
       </Route>
     </Routes>
   )

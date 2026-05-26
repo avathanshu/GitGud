@@ -8,6 +8,7 @@ import CommentSection from "./CommentSection";
 import CommunityVote from "./CommunityVote";
 import "./QuizCarousel.css";
 import { awardPoints } from "../usePoints";
+import { useDailies } from "../useDailies"
 
 // ─── Standard question used across ALL games ──────────────────────────────────
 const STANDARD_QUESTION = "What is the play here?";
@@ -300,6 +301,9 @@ export default function QuizCarousel({ user }) {
   const { gameId } = useParams();
   const SCENARIOS = SCENARIOS_BY_GAME[gameId] ?? FALLBACK_SCENARIOS;
 
+  // DAILIES: hook called directly — no prop threading or wrapper component needed
+  const { recordProgress } = useDailies(user?.uid);
+
   const [current, setCurrent]           = useState(0);
   const [selected, setSelected]         = useState(Array(SCENARIOS.length).fill(null));
   const [submitted, setSubmitted]       = useState(Array(SCENARIOS.length).fill(false));
@@ -345,6 +349,8 @@ export default function QuizCarousel({ user }) {
       const allDone = updatedSubmitted.every(Boolean);
       if (allDone && current === total - 1) {
         setShowComplete(true);
+        // DAILIES: primary completion path — quiz finished when last video ends
+        recordProgress("quiz", { passPct: Math.round((correctCount / total) * 100) });
       } else {
         goTo("next");
       }
@@ -404,6 +410,9 @@ export default function QuizCarousel({ user }) {
       awardPoints(user.uid, 10).catch((err) => console.error("awardPoints failed:", err));
     }
 
+    // DAILIES: correct answer submitted — increment quiz correct-answer quests
+    if (correct) recordProgress("quiz", { correct: 1 });
+
     // Fallback only — if the video end event never fires (e.g. user skips or
     // YouTube fails to report it), show complete after 60s on the last question.
     // handleVideoEnded is the real trigger and will cancel this if it fires first.
@@ -412,6 +421,8 @@ export default function QuizCarousel({ user }) {
       if (advanceTimer.current) clearTimeout(advanceTimer.current);
       advanceTimer.current = setTimeout(() => {
         setShowComplete(true);
+        // DAILIES: quiz finished via 60s fallback — report final score %
+        recordProgress("quiz", { passPct: Math.round((correctCount / total) * 100) });
       }, 60000); // 60s fallback — video end event should fire long before this
     }
   };

@@ -96,10 +96,16 @@ function Layout({ user }) {
             <div className="nav-desc">Test Your Game Sense &amp; Knowledge!</div>
           </NavLink>
 
+          <NavLink to="/dailies" className={({ isActive }) => isActive ? "practice active" : "practice"}>
+          <div className="nav-main">Dailies</div>
+          <div className="nav-desc">Your Daily Quests!</div>
+        </NavLink>
+
           <NavLink to="/leaderboard" className={({ isActive }) => isActive ? "practice active" : "practice"}>
             <div className="nav-main">Leaderboard</div>
             <div className="nav-desc">Check Your Rankings!</div>
           </NavLink>
+          
 
           <NavLink to="/user-quiz" className={({ isActive }) => isActive ? "practice active" : "practice"}>
             <div className="nav-main">User Quizzes</div>

@@ -1,0 +1,172 @@
+/* UserQuizCarousel.css
+   Additional styles for the multi-type user quiz player.
+   Extends QuizCarousel.css which is already imported.
+   Dark: black + orange  |  Light: white + blue
+*/
+
+/* ── Question tab row (multi-question per scenario) ──────────────────────── */
+.uqp-q-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.uqp-q-tab {
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1.5px solid var(--qc-input-border, #444);
+  background: var(--qc-input-bg, #222);
+  color: var(--qc-subtext, #999);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.uqp-q-tab:hover { border-color: var(--qc-frame); color: var(--qc-frame); }
+.uqp-q-tab.active { background: var(--qc-frame); border-color: var(--qc-frame); color: #000; }
+.uqp-q-tab.done { border-color: #22c55e; color: #22c55e; }
+.uqp-q-tab.done.active { background: #22c55e; color: #000; }
+
+/* ── Type badge next to Q badge ──────────────────────────────────────────── */
+.uqp-type-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  background: var(--qc-input-bg, #222);
+  border: 1px solid var(--qc-input-border, #444);
+  color: var(--qc-subtext, #999);
+  padding: 2px 8px;
+  border-radius: 20px;
+  text-transform: capitalize;
+  flex-shrink: 0;
+}
+
+/* ── Non-video nav row ───────────────────────────────────────────────────── */
+.uqp-text-nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+/* ── Rank player ─────────────────────────────────────────────────────────── */
+.uqp-rank-player { display: flex; flex-direction: column; }
+
+.uqp-rank-hint {
+  font-size: 0.8rem;
+  color: var(--qc-subtext, #999);
+  margin: 0 0 10px;
+}
+
+.uqp-rank-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.uqp-rank-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--qc-input-bg, #222);
+  border: 1.5px solid var(--qc-input-border, #444);
+  border-radius: 9px;
+  padding: 11px 14px;
+  cursor: grab;
+  user-select: none;
+  transition: background 0.15s, border-color 0.15s;
+  color: var(--qc-text, #f0f0f0);
+}
+.uqp-rank-card:hover:not(.correct-pos):not(.wrong-pos) { opacity: 0.85; }
+.uqp-rank-card:active { cursor: grabbing; }
+.uqp-rank-card.correct-pos { border-color: #22c55e; background: rgba(34,197,94,0.08); cursor: default; }
+.uqp-rank-card.wrong-pos   { border-color: #ef4444; background: rgba(239,68,68,0.08);  cursor: default; }
+
+.uqp-rank-pos {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--qc-frame);
+  color: #000;
+  font-size: 0.75rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.uqp-rank-text { flex: 1; font-size: 0.9rem; font-weight: 600; }
+
+.uqp-drag-handle {
+  font-size: 0.68rem;
+  color: var(--qc-subtext, #999);
+  margin-left: auto;
+}
+
+/* ── Correct order display (post-submit) ─────────────────────────────────── */
+.uqp-correct-order { margin-top: 10px; }
+
+.uqp-co-label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--qc-subtext, #999);
+  margin: 0 0 8px;
+}
+
+.uqp-co-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
+  font-size: 0.85rem;
+  color: var(--qc-text, #f0f0f0);
+}
+
+.uqp-co-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--qc-frame);
+  color: #000;
+  font-size: 0.68rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ── Enter value player ──────────────────────────────────────────────────── */
+.uqp-value-player { display: flex; flex-direction: column; }
+
+.uqp-value-input {
+  width: 100%;
+  background: var(--qc-input-bg, #222);
+  border: 1.5px solid var(--qc-input-border, #444);
+  border-radius: 8px;
+  color: var(--qc-text, #f0f0f0);
+  font-size: 1rem;
+  padding: 12px 14px;
+  box-sizing: border-box;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+.uqp-value-input:focus   { outline: none; border-color: var(--qc-frame); }
+.uqp-value-input.correct { border-color: #22c55e; }
+.uqp-value-input.wrong   { border-color: #ef4444; }
+.uqp-value-input:disabled { opacity: 0.75; cursor: default; }
+
+.uqp-value-hint {
+  font-size: 0.75rem;
+  color: var(--qc-subtext, #999);
+  margin: 6px 0 0;
+}
+
+/* ── Submit / next controls row ──────────────────────────────────────────── */
+.uqp-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 14px;
+}

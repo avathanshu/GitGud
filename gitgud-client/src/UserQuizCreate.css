@@ -352,3 +352,284 @@
   display: flex;
   flex-direction: column;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   NEW MULTI-TYPE STYLES — appended for skDev feature
+   Dark: black + orange  |  Light: white + blue
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Page title ─────────────────────────────────────────────────────────── */
+.uqc-page-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--qc-frame);
+  margin: 0 0 24px;
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+
+/* ── Question block ─────────────────────────────────────────────────────── */
+.uqc-question-block {
+  background: var(--qc-input-bg, #1a1a1a);
+  border: 1.5px solid var(--qc-input-border, #333);
+  border-left: 3px solid var(--qc-frame);
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 18px;
+}
+
+.uqc-question-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.uqc-q-num {
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--qc-frame);
+  flex-shrink: 0;
+}
+
+/* ── Type switcher pills ─────────────────────────────────────────────────── */
+.uqc-type-switcher {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.uqc-type-pill {
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1.5px solid var(--qc-input-border, #444);
+  background: var(--qc-input-bg, #222);
+  color: var(--qc-subtext, #999);
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.uqc-type-pill:hover {
+  border-color: var(--qc-frame);
+  color: var(--qc-frame);
+}
+
+.uqc-type-pill.active {
+  background: var(--qc-frame);
+  border-color: var(--qc-frame);
+  color: #000;
+}
+
+/* ── Remove question ─────────────────────────────────────────────────────── */
+.uqc-remove-q {
+  margin-left: auto;
+  background: none;
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.uqc-remove-q:hover { background: rgba(239,68,68,0.1); }
+
+/* ── Question editor container ───────────────────────────────────────────── */
+.uqc-qeditor { display: flex; flex-direction: column; }
+
+/* ── Fake answer inputs spacing ──────────────────────────────────────────── */
+.uqc-fake-input { margin-top: 6px; }
+
+/* ── Rank editor ─────────────────────────────────────────────────────────── */
+.uqc-rank-item-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.uqc-rank-num {
+  width: 22px;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--qc-subtext, #999);
+  flex-shrink: 0;
+}
+
+.uqc-rank-btns {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.uqc-btn-sm {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: 1.5px solid var(--qc-frame);
+  background: none;
+  color: var(--qc-frame);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.uqc-btn-sm:hover { background: rgba(255,106,0,0.1); }
+.uqc-btn-sm.danger { border-color: #ef4444; color: #ef4444; }
+.uqc-btn-sm.danger:hover { background: rgba(239,68,68,0.08); }
+
+/* ── Correct order drag list ─────────────────────────────────────────────── */
+.uqc-rank-order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.uqc-order-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--qc-submit-bg, #111);
+  border: 1.5px solid var(--qc-input-border, #333);
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: grab;
+  user-select: none;
+  transition: background 0.15s;
+  color: var(--qc-text, #f0f0f0);
+}
+.uqc-order-card:hover { opacity: 0.85; }
+.uqc-order-card:active { cursor: grabbing; }
+
+.uqc-order-rank {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--qc-frame);
+  color: #000;
+  font-size: 0.72rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.uqc-order-label {
+  flex: 1;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.uqc-drag-handle {
+  font-size: 0.68rem;
+  color: var(--qc-subtext, #999);
+  margin-left: auto;
+}
+
+/* ── Add question menu ───────────────────────────────────────────────────── */
+.uqc-add-q-wrap {
+  position: relative;
+  margin-top: 4px;
+}
+
+.uqc-add-q-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 2px dashed var(--qc-frame);
+  background: none;
+  color: var(--qc-frame);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.uqc-add-q-btn:hover { background: rgba(255,106,0,0.06); }
+
+.uqc-add-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--qc-input-bg, #1a1a1a);
+  border: 1.5px solid var(--qc-input-border, #333);
+  border-radius: 10px;
+  overflow: hidden;
+  z-index: 20;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+}
+
+.uqc-add-menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  border-bottom: 1px solid var(--qc-input-border, #333);
+  transition: background 0.15s;
+  color: var(--qc-text, #f0f0f0);
+}
+.uqc-add-menu-item:last-child { border-bottom: none; }
+.uqc-add-menu-item:hover { background: var(--qc-submit-bg, #111); }
+
+.uqc-add-menu-label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--qc-frame);
+}
+.uqc-add-menu-hint {
+  font-size: 0.74rem;
+  color: var(--qc-subtext, #999);
+  margin-top: 2px;
+}
+
+/* ── Small input for pauseAt ─────────────────────────────────────────────── */
+.uqc-input-sm { max-width: 140px; }
+
+/* ── Hint success variant ────────────────────────────────────────────────── */
+.uqc-hint-success { color: #22c55e; }
+
+/* ── Done screen ─────────────────────────────────────────────────────────── */
+.uqc-done {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+  max-width: 420px;
+  margin-top: 60px;
+}
+
+.uqc-done-icon {
+  font-size: 0.85rem;
+  font-weight: 800;
+  padding: 12px 20px;
+  border-radius: 10px;
+  background: var(--qc-frame);
+  color: #000;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.uqc-done h2 { font-size: 1.4rem; font-weight: 800; margin: 0; color: var(--qc-text, #f0f0f0); }
+.uqc-done p  { color: var(--qc-subtext, #999); font-size: 0.9rem; margin: 0; }
+
+.uqc-done-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 8px;
+}

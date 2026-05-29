@@ -84,6 +84,7 @@ app.post('/api/notifications/schedule-notification', async (req, res) => {
                         service_id: process.env.EMAILJS_SERVICE_ID,
                         template_id: process.env.EMAILJS_TEMPLATE_ID,
                         user_id: process.env.EMAILJS_PUBLIC_KEY,
+                        accessToken: process.env.EMAILJS_PRIVATE_KEY,
                         template_params: {
                             to_email: targetEmail,
                             recipient_name: targetName,
@@ -115,7 +116,7 @@ app.post('/api/notifications/schedule-notification', async (req, res) => {
     }
 });
 
-// 2. ROUTE: Instantly cancel a pending email countdown
+//Instantly cancel a pending email countdown
 app.post('/api/notifications/cancel-notification', (req, res) => {
     const { jobKey } = req.body; 
 

@@ -97,7 +97,7 @@ app.post('/api/notifications/schedule-notification', async (req, res) => {
                 });
 
                 if (emailjsResponse.ok) {
-                    console.log(`[Server Scheduler] Decoupled backend email successfully sent to ${targetEmail}`);
+                    console.log(`[Server Scheduler] Backend email successfully sent to ${targetEmail}`);
                 } else {
                     const errText = await emailjsResponse.text();
                     console.error(`[Server Scheduler] EmailJS server returned an error:`, errText);

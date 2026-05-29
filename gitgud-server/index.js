@@ -39,7 +39,7 @@ app.post('/api/notifications/schedule-notification', async (req, res) => {
             activeServerJobs[jobKey].cancel();
             console.log(`[Server Scheduler] Overwriting existing active timer for key: ${jobKey}`);
         }
-
+        //will change this if we reaching our email limit, make it longer, or shorter for Nathan
         const runTime = new Date(Date.now() + 5 * 60 * 1000); 
         console.log(`[Server Scheduler] Email scheduled for user ${userId} in 5 minutes (Key: ${jobKey})`);
 
@@ -89,9 +89,20 @@ app.post('/api/notifications/schedule-notification', async (req, res) => {
                             to_email: targetEmail,
                             recipient_name: targetName,
                             email_subject: type === "friend_request" 
-                                ? "New Friend Request on GitGud!" 
+                                ? "New Friend Request on GitGud!"
+                                : type === "comment_reply"
+                                ?`New reply to your comment from ${senderName}`
                                 : `New message from ${senderName}`,
-                            email_body: messageSnippet || "You have unread updates waiting on GitGud!"
+
+                            email_body: messageSnippet?.trim()
+                            ? `Message: ${messageSnippet}`
+                            : "You have unread updates waiting on GitGud!",
+                            
+                            action_url: type === "friend_request"
+                            ? `http://localhost:5173/profile/${userId}`
+                            : type === "comment_reply"
+                            ? `http://localhost:5173/posts/${quizId || chatId}`
+                            : `http://localhost:5173/messages/${chatId}`
                         }
                     })
                 });

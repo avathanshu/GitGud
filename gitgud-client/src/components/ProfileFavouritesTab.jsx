@@ -37,8 +37,7 @@ export default function ProfileFavouritesTab({ uidProp }) {
         key={c.id}
         className="fav-clip-card"
         onClick={() => { console.log("Navigating to:", c.videoPath);
-          navigate(c.videoPath || `/quiz/${c.id}`);
-}}
+          navigate(c.videoPath || `/quiz/${c.id}`);}}
       >
         {c.thumbnail && (
           <img

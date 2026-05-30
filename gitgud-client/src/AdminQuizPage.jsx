@@ -55,6 +55,7 @@ import {
 } from "./adminQuizUtils";
 import { awardPoints } from "./usePoints";
 import "./AdminQuizPage.css";
+import { updateQuizStats } from "./statsService"; // for updating user quiz stats after each question submission
 
 // ── Game metadata ─────────────────────────────────────────────────────────────
 const GAME_META = {
@@ -317,8 +318,46 @@ function AdminQuizPlayer({ quiz, user, onBack }) {
     }
 
     if (allDone && current === total - 1) {
-      setTimeout(() => setShowComplete(true), 800);
+
+  const finalAnswers = questions.map((question, i) => {
+    const a = { type: question.type };
+
+    if (question.type === QUESTION_TYPES.MULTI_CHOICE) {
+      a.playerAnswer = answers[i];
+      a.correctIndex = question.correctIndex;
     }
+    else if (question.type === QUESTION_TYPES.ENTER_VALUE) {
+      a.playerAnswer = answers[i] ?? "";
+      a.correctAnswer = question.correctAnswer;
+    }
+    else if (question.type === QUESTION_TYPES.RANK) {
+      a.playerAnswer =
+        answers[i] ??
+        question.items.map((_, idx) => idx);
+
+      a.correctOrder =
+        question.correctOrder;
+    }
+
+    return a;
+  });
+
+  const finalScore =
+    calculateScore(finalAnswers);
+
+  if (user?.uid) {
+    await updateQuizStats(
+      user.uid,
+      finalScore.correct,
+      finalScore.total
+    );
+  }
+
+  setTimeout(
+    () => setShowComplete(true),
+    800
+  );
+}
   };
 
   const goNext = () => {

@@ -8,6 +8,7 @@ import { useTheme } from './context/ThemeContext';
 import { useParams, useNavigate } from 'react-router-dom';
 import ProfileFavouritesTab from './components/ProfileFavouritesTab';
 import { useSearchParams } from "react-router-dom";
+import { ACHIEVEMENTS } from "./achievement";
 
 function ProfilePage({ user, targetUser })
 {
@@ -27,6 +28,9 @@ function ProfilePage({ user, targetUser })
     const [friendStatus, setFriendStatus] = useState("none");
     const [searchParams] = useSearchParams();
     const [activeTab, setActiveTab] = useState( searchParams.get("tab") || "overview" );
+    const [equippedAchievements, setEquippedAchievements] = useState([]);
+    const canViewAchievements = isOwner || friendStatus === "friend";
+    const canViewFavourites = isOwner;
 
     useEffect(() => {
         async function loadProfileData() {
@@ -53,6 +57,7 @@ function ProfilePage({ user, targetUser })
                     setUsername(data.username || user.displayName || "");
                     const fallbackPic = isOwner ? user?.photoURL : "";
                     setProfilePic(data.photoURL || user.photoURL || "");
+                    setEquippedAchievements( data.equippedAchievement || []);
                 } else
                 { 
                     console.log("no doc exists")
@@ -470,12 +475,28 @@ function ProfilePage({ user, targetUser })
       >
         Overview
       </button>
-      <button
-        className={activeTab === "favourites" ? "tab-btn active" : "tab-btn"}
-        onClick={() => setActiveTab("favourites")}
-      >
-        Favourite Clips
-      </button>
+
+     {canViewAchievements && (
+    <button
+      className={activeTab === "achievements"
+        ? "tab-btn active"
+        : "tab-btn"}
+      onClick={() => setActiveTab("achievements")}
+    >
+      Achievements
+    </button>
+  )}
+
+      {isOwner && (
+  <button
+    className={activeTab === "favourites"
+      ? "tab-btn active"
+      : "tab-btn"}
+    onClick={() => setActiveTab("favourites")}
+  >
+    Favourite Clips
+  </button>
+)}
     </div>
 
     {activeTab === "overview" && (
@@ -508,13 +529,64 @@ function ProfilePage({ user, targetUser })
       </div>
     )}
 
+    {activeTab === "achievements" &&
+ canViewAchievements && (
+
+  <div className="achievements-section">
+
+    <h3>
+      Equipped Achievements
+    </h3>
+
+    <div className="achievement-badges">
+
+      {equippedAchievements.length > 0 ? (
+        equippedAchievements.map(id => {
+
+          const achievement =
+            ACHIEVEMENTS.find(
+              a => a.id === id
+            );
+
+          if (!achievement) return null;
+
+          return (
+            <div
+  key={id}
+  className="achievement-badge"
+>
+  <div className="badge-icon">
+    {achievement.icon}
+  </div>
+
+  <div className="badge-name">
+    {achievement.name}
+  </div>
+
+   <div className="badge-tooltip">
+    {achievement.description}
+  </div>
+</div>
+          );
+        })
+      ) : (
+        <p>
+          No achievements equipped. How Boring!
+        </p>
+      )}
+
+    </div>
+
+  </div>
+)} 
+
     {/* Favourites tab: saved clips */}
-    {activeTab === "favourites" && (
-      <div className="favourites-section">
-        <h3>Favourite Clips</h3>
-        <ProfileFavouritesTab uidProp={targetId} />
-      </div>
-    )}
+    {activeTab === "favourites" && isOwner && (
+  <div className="favourites-section">
+    <h3>Favourite Clips</h3>
+    <ProfileFavouritesTab uidProp={targetId} />
+  </div>
+)}
   </>
 )}
         </div>

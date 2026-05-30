@@ -4,6 +4,7 @@ import { useTheme } from "../context/ThemeContext";
 import { db, auth } from "../firebase";
 import { collection, addDoc, serverTimestamp, doc, getDoc } from "firebase/firestore";
 import { useDailies } from "../useDailies"; // DAILIES: import hook
+import { updateAimStats } from "../statsService.js"; //rewards import hook
 
 export default function AimGame() {
   const GAME_TIME = 30;
@@ -182,6 +183,15 @@ export default function AimGame() {
         photoURL,
         ...resultData,
       });
+
+      if(user) {
+      await updateAimStats(
+        user.uid,
+        resultData.hits,
+        resultData.accuracy
+      );
+    } 
+
     } catch (e) {
       console.error("Error saving aim result:", e);
     }

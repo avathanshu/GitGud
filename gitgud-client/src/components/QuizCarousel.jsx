@@ -10,6 +10,7 @@ import "./QuizCarousel.css";
 import { awardPoints } from "../usePoints";
 import { useDailies } from "../useDailies"
 import FavVideoButton from "./FavVideoButton";
+import { updateQuizStats } from "../statsService";
 
 // ─── Standard question used across ALL games ──────────────────────────────────
 const STANDARD_QUESTION = "What is the play here?";
@@ -433,6 +434,12 @@ export default function QuizCarousel({ user }) {
         // DAILIES: quiz finished via 60s fallback — report final score %
         recordProgress("quiz", { passPct: Math.round((correctCount / total) * 100) });
       }, 60000); // 60s fallback — video end event should fire long before this
+
+      if (user?.uid) {
+              await updateQuizStats(user.uid, correctCount, total);
+          }
+      
+          recordProgress("quiz", {passPct: Math.round((correctCount / total) * 100)});
     }
   };
 

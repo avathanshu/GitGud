@@ -104,6 +104,11 @@ function Layout({ user }) {
           <div className="nav-desc">Your Daily Quests!</div>
         </NavLink>
 
+          <NavLink to="/rewards" className={({ isActive }) => isActive ? "practice active" : "practice" }>
+          <div className="nav-main">Rewards</div>
+          <div className="nav-desc"> Unlock Achievements & Cosmetics!</div>
+        </NavLink>  
+
           <NavLink to="/leaderboard" className={({ isActive }) => isActive ? "practice active" : "practice"}>
             <div className="nav-main">Leaderboard</div>
             <div className="nav-desc">Check Your Rankings!</div>

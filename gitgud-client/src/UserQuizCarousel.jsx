@@ -37,6 +37,8 @@ import CommunityVote from "./components/CommunityVote";
 import "./components/QuizCarousel.css";
 import "./UserQuizCarousel.css";
 import FavVideoButton from "./components/FavVideoButton"; // for testing, can remove or replace with a "favourite this quiz" button if you like
+import { updateQuizStats } from "./statsService";
+
 
 // ── Value answer matching (mirrors adminQuizUtils logic, no shared import needed) ─
 function normaliseValue(raw) {
@@ -488,6 +490,12 @@ export default function UserQuizCarousel({ user }) {
     if (allDone && currentQ === qTotal - 1 && current === total - 1) {
       if (advanceTimer.current) clearTimeout(advanceTimer.current);
       advanceTimer.current = setTimeout(() => setShowComplete(true), 60000);
+
+      if (user?.uid) {
+              await updateQuizStats(user.uid, totalCorrect, totalQuestions);
+          }
+      
+          recordProgress("quiz", {passPct: Math.round((totalCorrect / totalQuestions) * 100)});
     }
   };
 

@@ -8,6 +8,7 @@ import target from "../assets/reaction/terrorist-target.png";
 import { db, auth } from "../firebase";
 import { collection, addDoc, serverTimestamp, doc, getDoc } from "firebase/firestore";
 import { useDailies } from "../useDailies";
+import { updateReactionStats } from "../statsService.js";
 
 
 const TOTAL_ROUNDS = 8;
@@ -69,20 +70,23 @@ export default function ReactionGame() {
     setTargetVisible(false);
   }
 
-//for leaderboard, will add to firestore collection after each session
+//for leaderboard and daily quests, will add to firestore collection after each session
 async function saveReactionResult(avg, best, rounds) {
   try {
     const user = auth.currentUser;
     let username = user?.displayName || "Anonymous";
     let photoURL = user?.photoURL || "";
+
     if (user) {
       const userSnap = await getDoc(doc(db, "users", user.uid));
+
       if (userSnap.exists()) {
         const data = userSnap.data();
         username = data.username || data.displayName || username;
         photoURL = data.photoURL || photoURL;
       }
     }
+
     await addDoc(collection(db, "reactionResults"), {
       userId: user ? user.uid : "guest",
       username,
@@ -92,7 +96,17 @@ async function saveReactionResult(avg, best, rounds) {
       rounds,
       createdAt: serverTimestamp(),
     });
+
+    if (user) {
+      await updateReactionStats(
+        user.uid,
+        best,
+        avg
+      );
+    }
+
     console.log("Reaction results saved!");
+
   } catch (err) {
     console.error("Error saving reaction result:", err);
   }
@@ -244,7 +258,7 @@ saveReactionResult(finalAvg, finalBest, updatedTimes.length);
       rank: "Cheetah 🐆",
       comment: "Very sharp reflexes."
     };
-  } else if (avg >= 170) {
+  } else if (avg >= 190) {
     return {
       rank: "Falcon 🦅",
       comment: "Competitive-level reaction speed."

@@ -13,6 +13,7 @@ import { useState, useEffect } from "react"
 import { doc, getDoc, updateDoc } from "firebase/firestore"
 import { db } from "./firebase"
 import { awardPoints } from "./usePoints"
+import { updateDailyStats } from "./statsService"
 
 // ─── Quest Pool ───────────────────────────────────────────────────────────────
 // 10 quests across 3 activity types. Each day, 3 are selected deterministically
@@ -180,9 +181,22 @@ export function useDailies(uid) {
 
       // `rewarded` flag prevents double-awarding if recordProgress is called twice
       if (next.done && !q.rewarded) {
-        await awardPoints(uid, next.xpReward)
-        return { ...next, rewarded: true }
-      }
+
+  console.log("QUEST COMPLETED:", q.id);
+
+  await awardPoints(uid, next.xpReward);
+
+  console.log("Calling updateDailyStats");
+
+  await updateDailyStats(uid, 1);
+
+  console.log("updateDailyStats finished");
+
+  return {
+    ...next,
+    rewarded: true
+  };
+}
       return next
     }))
 

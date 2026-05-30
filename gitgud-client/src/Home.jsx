@@ -502,6 +502,7 @@ const maxCardsInRow = Math.max(...cardRows.map((row) => row.length));
       }}
     >
       Hmm, no preferences? Pretty boring.
+      <center>Add some categories to your filter to spice things up!</center>
     </p>
   </div>
 ) : (

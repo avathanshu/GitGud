@@ -27,6 +27,7 @@ import LeaderboardPage from "./LeaderboardPage"
 import ChatPage from './ChatPage'
 import ChatDashboard from './ChatDashboard'
 import DailiesPage from './DailiesPage'   // DAILIES: new page
+import RewardPage from './RewardPage'     // REWARDS: new page
 
 function App() {
   const [user, setUser] = useState(undefined)
@@ -83,6 +84,9 @@ function App() {
 
         {/* ── Admin quiz builder ────────────────────────────────────────── */}
         <Route path="admin-quiz/create" element={<AdminQuizCreate user={user} />} />
+
+        {/* ── Rewards page (achievements, frames, titles) ────────────────── */}
+        <Route path="rewards" element={<RewardPage user={user} />} />
 
         {/* ── Leaderboard ───────────────────────────────────────────────── */}
         <Route path="leaderboard" element={<LeaderboardPage currentUid={user.uid} />} />

@@ -94,7 +94,7 @@ function App() {
         {/* ── User quizzes ──────────────────────────────────────────────── */}
         <Route path="user-quiz" element={<UserQuizPage user={user} />} />
         <Route path="user-quiz/create" element={<UserQuizCreate user={user} />} />
-        <Route path="user-quiz/play/:gameId" element={<UserQuizCarousel user={user} />} />
+        <Route path="user-quiz/play/:gameId/:quizId?" element={<UserQuizCarousel user={user} />} />
 
         {/* ── Admin moderation panel ────────────────────────────────────── */}
         <Route path="admin" element={<AdminPanel user={user} />} />

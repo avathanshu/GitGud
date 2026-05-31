@@ -5,6 +5,8 @@ import { db, auth } from "../firebase";
 import { collection, addDoc, serverTimestamp, doc, getDoc } from "firebase/firestore";
 import { useDailies } from "../useDailies"; // DAILIES: import hook
 import { updateAimStats } from "../statsService.js"; //rewards import hook
+import { awardPoints } from "../usePoints.js"; //rewards import hook
+import { PERK_KEY } from "../skilltree/skillTreeData";
 
 export default function AimGame() {
   const GAME_TIME = 30;
@@ -17,9 +19,15 @@ export default function AimGame() {
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(GAME_TIME);
   const [target, setTarget] = useState({ x: 50, y: 50 });
+  const [targetSize, setTargetSize] = useState(75);
   const [gameActive, setGameActive] = useState(false);
   const [clicks, setClicks] = useState(0);
   const [result, setResult] = useState(null);
+
+  //xp variables to prevent stale closures in setInterval and endGame
+  const [xpEarned, setXpEarned] = useState(0);
+
+
   const [crosshairType, setCrosshairType] = useState("plus");
   const [crosshairColor, setCrosshairColor] = useState("#ffffff");
   const [inGame, setInGame] = useState(false);
@@ -98,20 +106,39 @@ export default function AimGame() {
     return () => clearInterval(timer);
   }, [gameActive]);
 
-  const startGame = () => {
-    gameEndedRef.current = false;
-    let next = currentMap;
-    while (maps.length > 1 && next === currentMap) {
-      next = maps[Math.floor(Math.random() * maps.length)];
+ const startGame = async () => {
+  const user = auth.currentUser;
+
+  if (user) {
+    const snap = await getDoc(doc(db, "users", user.uid));
+
+    const unlockedPerks =
+      snap.data()?.skillTree?.unlockedPerks || [];
+
+    if (unlockedPerks.includes(PERK_KEY.AIM_ACTIVE_1)) {
+      setTargetSize(90);
+    } else {
+      setTargetSize(75);
     }
-    setCurrentMap(next);
-    setScore(0);
-    setClicks(0);
-    setTimeLeft(GAME_TIME);
-    setResult(null);
-    setGameActive(true);
-    spawnTarget();
-  };
+  } else {
+    setTargetSize(75);
+  }
+
+  gameEndedRef.current = false;
+
+  let next = currentMap;
+  while (maps.length > 1 && next === currentMap) {
+    next = maps[Math.floor(Math.random() * maps.length)];
+  }
+
+  setCurrentMap(next);
+  setScore(0);
+  setClicks(0);
+  setTimeLeft(GAME_TIME);
+  setResult(null);
+  setGameActive(true);
+  spawnTarget();
+};
 
   const gunSounds = [
     "/sounds/Gun sound 1.m4a",
@@ -141,10 +168,21 @@ export default function AimGame() {
     a.play();
   };
 
-  async function endGame(finalScore, finalClicks) {
-    if (gameEndedRef.current) return;
-    gameEndedRef.current = true;
-    setGameActive(false);
+async function endGame(finalScore, finalClicks) {
+  if (gameEndedRef.current) return;
+  gameEndedRef.current = true;
+  setGameActive(false);
+
+  const user = auth.currentUser;
+
+  let unlockedPerks = [];
+
+  if (user) {
+    const snap = await getDoc(doc(db, "users", user.uid));
+
+    unlockedPerks =
+      snap.data()?.skillTree?.unlockedPerks || [];
+  }
 
     const misses = finalClicks - finalScore;
     const accuracy =
@@ -158,13 +196,34 @@ export default function AimGame() {
       createdAt: serverTimestamp(),
     };
 
+    let xpEarned = finalScore;
+
+if ( unlockedPerks.includes(PERK_KEY.AIM_PASSIVE_2) ) {
+  xpEarned = Math.floor(xpEarned * 1.5);
+} else if ( unlockedPerks.includes(PERK_KEY.AIM_PASSIVE_1) ) {
+  xpEarned = Math.floor(xpEarned * 1.25);
+}
+
+    if (accuracy >= 90) {
+      xpEarned += 25;
+    }
+
+    if (accuracy >= 95) {
+      xpEarned += 25;
+    }
+
+    if (accuracy === 100) {
+      xpEarned += 50;
+    }
+
+setXpEarned(xpEarned);
+
     setResult(resultData);
 
     // DAILIES: session ended — report accuracy and session count to daily quests
     recordProgress("aim", { accuracy: resultData.accuracy, session: true });
 
     try {
-      const user = auth.currentUser;
       let username = user?.displayName || "Anonymous";
       let photoURL = user?.photoURL || "";
 
@@ -185,11 +244,9 @@ export default function AimGame() {
       });
 
       if(user) {
-      await updateAimStats(
-        user.uid,
-        resultData.hits,
-        resultData.accuracy
-      );
+      await updateAimStats( user.uid, resultData.hits, resultData.accuracy );
+
+      await awardPoints(user.uid, xpEarned, "Aim Trainer session");
     } 
 
     } catch (e) {
@@ -347,8 +404,8 @@ export default function AimGame() {
                 position: "absolute",
                 top: `${target.y}%`,
                 left: `${target.x}%`,
-                width: "75px",
-                height: "75px",
+                width: `${targetSize}px`,
+                height: `${targetSize}px`,
                 borderRadius: "50%",
                 background: "radial-gradient(circle, var(--qc-frame) 0%, var(--qc-frame) 20%, white 20%, white 35%, var(--qc-frame) 35%, var(--qc-frame) 55%, white 55%, white 70%, var(--qc-text) 70%, var(--qc-text) 100%)",
                 boxShadow: "0 0 15px var(--qc-frame)",
@@ -361,9 +418,10 @@ export default function AimGame() {
             <div className="aim-results-overlay">
               <div className="result-box">
                 <h2>Results</h2>
-                <p>Hits: {result.hits}</p>
-                <p>Misses: {result.misses}</p>
-                <p>Accuracy: {result.accuracy}%</p>
+                <p><strong>Hits:</strong> {result.hits}</p>
+                <p><strong>Misses:</strong> {result.misses}</p>
+                <p><strong>Accuracy:</strong> {result.accuracy}%</p>
+                <p><strong>XP Earned:</strong> +{xpEarned}</p>
                 <button
                   className="start-button"
                   onClick={() => {

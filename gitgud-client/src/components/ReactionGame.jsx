@@ -9,6 +9,8 @@ import { db, auth } from "../firebase";
 import { collection, addDoc, serverTimestamp, doc, getDoc } from "firebase/firestore";
 import { useDailies } from "../useDailies";
 import { updateReactionStats } from "../statsService.js";
+import { awardPoints } from "../usePoints.js"; //rewards import hook
+import { PERK_KEY } from "../skilltree/skillTreeData";
 
 
 const TOTAL_ROUNDS = 8;
@@ -25,6 +27,7 @@ export default function ReactionGame() {
 
   const [round, setRound] = useState(1);
   const [reactionTimes, setReactionTimes] = useState([]);
+  const [xpEarned, setXpEarned] = useState(0);
   const [currentReaction, setCurrentReaction] = useState(null);
   const [message, setMessage] = useState("Press Start to Begin");
   const [targetVisible, setTargetVisible] = useState(false);
@@ -157,7 +160,7 @@ useEffect(() => {
 
 
   // Handle clicking on the game area
-  function handleShot() {
+  async function handleShot() {
     // Too early
     if (gameState === "waiting") {
       clearAllTimeouts();
@@ -192,11 +195,46 @@ useEffect(() => {
         gameEndedRef.current = true;
         setGameState("complete");
         setMessage("Session Complete!")
-        const finalAvg = Math.round(
-  updatedTimes.reduce((sum, t) => sum + t, 0) / updatedTimes.length
-);
-const finalBest = Math.min(...updatedTimes);
+        const finalAvg = Math.round( updatedTimes.reduce((sum, t) => sum + t, 0) / updatedTimes.length );
+        const finalBest = Math.min(...updatedTimes);
+
+        let unlockedPerks = [];
+
+if (auth.currentUser) {
+  const userSnap = await getDoc(
+    doc(db, "users", auth.currentUser.uid)
+  );
+
+  unlockedPerks =
+    userSnap.data()?.skillTree?.unlockedPerks || [];
+}
+
+let xpEarned = 0;
+
+if (finalAvg <= 250) {
+  xpEarned += 25;
+}
+
+if (finalAvg <= 220) {
+  xpEarned += 25;
+}
+
+if (finalAvg <= 190) {
+  xpEarned += 50;
+}
+
+if (unlockedPerks.includes(PERK_KEY.REACTION_PASSIVE_1)) {
+  xpEarned = Math.floor(xpEarned * 1.1);
+}
+
+setXpEarned(xpEarned);
+
 saveReactionResult(finalAvg, finalBest, updatedTimes.length);
+
+if (auth.currentUser) {
+  await awardPoints(auth.currentUser.uid, xpEarned);
+}
+
         // DAILIES: full session completed — report to daily quests
         recordProgress("reaction", { session: true });
       } else {
@@ -451,6 +489,7 @@ useEffect(() => {
               <div><strong>Average:</strong> {averageReaction} ms</div>
               <div><strong>Best:</strong> {bestReaction} ms</div>
               <div><strong>Shots:</strong> {reactionTimes.length}</div>
+              <div><strong>XP Earned:</strong> +{xpEarned}</div>
             </div>
 
             <div className="rank-display">

@@ -17,6 +17,8 @@ import {
 } from './skillTreeEngine';
 import { SKILL_MAP, PERK_KEY } from './skillTreeData';
 
+// ── Level 0 ────────────────────────────────────────────────────────────────
+
 /**
  * @param {string} uid – Firebase user id
  * @returns {{

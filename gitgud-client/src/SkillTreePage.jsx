@@ -21,24 +21,32 @@ function computeLayout(nodes) {
   const byLevel = {};
   nodes.forEach(n => { if (!byLevel[n.level]) byLevel[n.level] = []; byLevel[n.level].push(n); });
   const positions = {};
-  const CANVAS_W = 900;
+  const CANVAS_W = 1900;
 
   const l0 = byLevel[0] ?? [];
   l0.forEach(n => { positions[n.id] = { x: CANVAS_W / 2 - NODE_W / 2, y: 20 }; });
 
   const l1 = byLevel[1] ?? [];
-  const l1Spacing = 450;
-  l1.forEach((n, i) => { positions[n.id] = { x: CANVAS_W / 2 - l1Spacing / 2 + i * l1Spacing - NODE_W / 2, y: 20 + NODE_H + V_GAP }; });
+  const spacing = 450;
+  const totalWidth = (l1.length - 1) * spacing; l1.forEach((n, i) => { positions[n.id] = { x: CANVAS_W / 2 - totalWidth / 2 + i * spacing - NODE_W / 2, y: 20 + NODE_H + V_GAP, }; });
 
   const l2 = byLevel[2] ?? [];
+
+  const level2Spacing = 190; // adjust as needed
+  const level2Width = (l2.length - 1) * level2Spacing;
+
   l2.forEach(n => {
-    const parentId = n.parentIds[0];
-    const parentPos = positions[parentId];
-    const siblings = l2.filter(s => s.parentIds[0] === parentId);
-    const idx = siblings.indexOf(n);
-    const offset = (idx - (siblings.length - 1) / 2) * (NODE_W + H_GAP);
-    positions[n.id] = { x: parentPos.x + NODE_W / 2 + offset - NODE_W / 2, y: parentPos.y + NODE_H + V_GAP };
-  });
+  const parentId = n.parentIds[0];
+  const parentPos = positions[parentId];
+  const siblings = l2.filter(s => s.parentIds[0] === parentId);
+  const idx = siblings.indexOf(n);
+  const offset = (idx - (siblings.length - 1) / 2) * 250;
+
+  positions[n.id] = {
+    x: parentPos.x + NODE_W / 2 + offset - NODE_W / 2,
+    y: parentPos.y + NODE_H + V_GAP
+  };
+});
 
   const l3 = byLevel[3] ?? [];
   l3.forEach(n => {
@@ -46,6 +54,18 @@ function computeLayout(nodes) {
     const parentPos = positions[parentId];
     positions[n.id] = { x: parentPos.x, y: parentPos.y + NODE_H + V_GAP };
   });
+
+  const xs = Object.values(positions).map(p => p.x);
+
+const minX = Math.min(...xs);
+const maxX = Math.max(...xs) + NODE_W;
+
+const treeWidth = maxX - minX;
+const offsetX = (CANVAS_W - treeWidth) / 2 - minX;
+
+Object.values(positions).forEach(pos => {
+  pos.x += offsetX;
+});
 
   return positions;
 }
@@ -326,7 +346,7 @@ export default function SkillTreePage({ user }) {
       {/* SVG Tree — wrapper is position:relative so the HTML tooltip can be
           absolutely positioned inside it and always sit above the SVG. */}
       <div className="st-canvas-wrap" ref={canvasWrapRef} style={{ position: 'relative' }}>
-        <svg viewBox={`0 0 ${canvasW} ${canvasH}`} className="st-canvas" aria-label="Skill tree diagram">
+        <svg viewBox={`0 0 1900 ${canvasH}`} className="st-canvas" aria-label="Skill tree diagram">
           {/* Connectors */}
           {SKILL_NODES.map(node =>
             node.parentIds.map(parentId => {

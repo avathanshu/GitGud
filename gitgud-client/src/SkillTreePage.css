@@ -127,7 +127,7 @@
   width: 100%; overflow-x: auto; background: var(--st-surface);
   border: 1px solid var(--st-border); border-radius: 16px; padding: 16px; margin-bottom: 20px;
 }
-.st-canvas { display: block; width: 100%; max-width: 900px; margin: 0 auto; }
+.st-canvas { display: block; width: 100%; max-width: 1900px; margin: 0 auto; }
 
 /* ── Node states ──────────────────────────────────────────────────────────── */
 .st-node .st-node-rect {

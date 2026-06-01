@@ -2,8 +2,12 @@ import { useState, useEffect } from "react"
 import { doc, getDoc, setDoc, updateDoc, onSnapshot, runTransaction } from "firebase/firestore"
 import { db } from "./firebase"
 
-const LEVEL_THRESHOLDS = [0, 100, 500, 1500, 4000, 10000]
-// index = level-1, so LEVEL_THRESHOLDS[0] = Level 1 min XP, [1] = Level 2, etc.
+const MAX_LEVEL = 25;
+
+const LEVEL_THRESHOLDS = [0];
+let totalXp = 0;
+
+for (let level = 2; level <= MAX_LEVEL; level++) { totalXp += level * 100; LEVEL_THRESHOLDS.push(totalXp);}
 
 export function getLevel(xp) {
   let level = 1
@@ -16,7 +20,7 @@ export function getLevel(xp) {
 
 export function getLevelProgress(xp) {
   const level = getLevel(xp)
-  const isMax = level >= LEVEL_THRESHOLDS.length
+  const isMax = level >= MAX_LEVEL
   const currentFloor = LEVEL_THRESHOLDS[level - 1]
   const nextFloor = isMax ? null : LEVEL_THRESHOLDS[level]
   const pct = isMax ? 100 : Math.floor(((xp - currentFloor) / (nextFloor - currentFloor)) * 100)

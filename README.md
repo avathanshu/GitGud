@@ -48,6 +48,7 @@ npm install react-router-dom
 **Backend:**
 ```bash
 cd ../gitgud-server
+npm installl
 npm install node-schedule
 npm install jsonwebtoken@9.0.3 --save
 npm install uuid@11.1.1 --save
